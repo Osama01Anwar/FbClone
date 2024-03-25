@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Facebook Post Clone</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+  }
+  .navbar {
+    background-color: #3b5998;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+  }
+  .navbar img {
+    height: 20px;
+  }
+  .search-bar {
+    margin-left: 10px;
+    padding: 5px;
+    background: #f1f2f5;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+  }
+  .post {
+    background-color: white;
+    margin: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  .post-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .post-header .username {
+    font-weight: bold;
+  }
+  .post-content {
+    margin: 10px 0;
+    position: relative;
+    cursor: pointer;
+  }
+  .post-content input[type="file"] {
+    display: none;
+  }
+  .post-content img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+  }
+  .upload-button {
+    padding: 8px 16px;
+    background-color: #3b5998;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .post-actions {
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-around;
+  }
+  .post-actions button {
+    background: none;
+    border: none;
+    color: #3b5998;
+    cursor: pointer;
+  }
+  .like-count, .comment-count {
+    margin: 10px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <img src="facebook-logo.png" alt="Facebook logo">
+  <input type="text" class="search-bar" placeholder="Search Facebook">
+</div>
+
+<div id="posts-container"></div>
+
+<script>
+  // Arrays of random options
+  var usernames = ['John Doe', 'Jane Smith', 'Alice', 'Bob', 'Eve'];
+  var reactions = ['Like', 'Love', 'Haha', 'Wow', 'Sad', 'Angry'];
+  var emojis = ['👍', '❤️', '😂', '😮', '😢', '😠'];
+
+  function createPost() {
+    var postContainer = document.createElement('div');
+    postContainer.classList.add('post');
+
+    var postHeader = document.createElement('div');
+    postHeader.classList.add('post-header');
+    var usernameSpan = document.createElement('span');
+    usernameSpan.classList.add('username');
+    usernameSpan.textContent = usernames[Math.floor(Math.random() * usernames.length)]; // Random username
+    var timeSpan = document.createElement('span');
+    timeSpan.textContent = 'Monday at 11:00 AM';
+    postHeader.appendChild(usernameSpan);
+    postHeader.appendChild(timeSpan);
+
+    var postContent = document.createElement('div');
+    postContent.classList.add('post-content');
+    var uploadButton = document.createElement('button');
+    uploadButton.classList.add('upload-button');
+    uploadButton.textContent = 'Upload Image';
+    uploadButton.setAttribute('onclick', 'uploadImage(this)');
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.style.display = 'none';
+    fileInput.onchange = function() {
+      displayImage(this, postContent);
+    };
+    postContent.appendChild(uploadButton);
+    postContent.appendChild(fileInput);
+
+    var likeCount = document.createElement('div');
+    likeCount.classList.add('like-count');
+    likeCount.textContent = generateReactionCount();
+
+    var commentCount = document.createElement('div');
+    commentCount.classList.add('comment-count');
+    commentCount.textContent = Math.floor(Math.random() * 100) + ' comments'; // Random comment count
+
+    var postActions = document.createElement('div');
+    postActions.classList.add('post-actions');
+    var likeButton = document.createElement('button');
+    likeButton.textContent = 'Like';
+    likeButton.onclick = function() {
+      alert(generateReaction('Like'));
+    };
+    var commentButton = document.createElement('button');
+    commentButton.textContent = 'Comment';
+    commentButton.onclick = function() {
+      alert('Comment button clicked');
+    };
+    var shareButton = document.createElement('button');
+    shareButton.textContent = 'Share';
+    shareButton.onclick = function() {
+      alert('Share button clicked');
+    };
+    postActions.appendChild(likeButton);
+    postActions.appendChild(commentButton);
+    postActions.appendChild(shareButton);
+
+    postContainer.appendChild(postHeader);
+    postContainer.appendChild(postContent);
+    postContainer.appendChild(likeCount);
+    postContainer.appendChild(commentCount);
+    postContainer.appendChild(postActions);
+
+    document.getElementById('posts-container').appendChild(postContainer);
+  }
+
+  function uploadImage(button) {
+    var fileInput = button.nextElementSibling;
+    fileInput.click();
+  }
+
+  function displayImage(input, container) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var img = document.createElement('img');
+        img.src = e.target.result;
+        container.appendChild(img);
+      }
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  function generateReaction(reaction) {
+    var randomUsername = usernames[Math.floor(Math.random() * usernames.length)];
+    var randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+    return randomUsername + ' ' + reaction + ' ' + randomEmoji;
+  }
+
+  function generateReactionCount() {
+    var reactionsArray = [];
+    for (var i = 0; i < reactions.length; i++) {
+      var randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+      reactionsArray.push(Math.floor(Math.random() * 100) + ' ' + reactions[i] + ' ' + randomEmoji);
+    }
+    return reactionsArray.join(' • ');
+  }
+</script>
+
+<button onclick="createPost()">Create Post</button>
+
+</body>
+</html>
